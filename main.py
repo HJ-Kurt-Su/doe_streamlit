@@ -187,15 +187,17 @@ if uploaded_csv is not None:
       fig_pair.update_traces(diagonal_visible=False, showupperhalf=False,)
       st.plotly_chart(fig_pair, use_container_width=True)
 
-      mybuff = io.StringIO()
-      fig_file_name = doe_type + "_pair-plot-test.html"
-      # fig_html = fig_pair.write_html(fig_file_name)
-      fig_pair.write_html(mybuff, include_plotlyjs='cdn')
-      html_bytes = mybuff.getvalue().encode()
+      # mybuff = io.StringIO()
+      # fig_file_name = doe_type + "_pair-plot-test.html"
+      # # fig_html = fig_pair.write_html(fig_file_name)
+      # fig_pair.write_html(mybuff, include_plotlyjs='cdn')
+      # html_bytes = mybuff.getvalue().encode()
       
 
       csv = convert_df(df_resp)
-      doe_table = doe_type + "_doe-table.csv"
+      date = str(datetime.datetime.now()).split(" ")[0]
+      # table_filename = doe_type + "_table_" + date
+      doe_table = doe_type + "_" + date + "_doe-table.csv"
       st.download_button(label='Download DOE table as CSV', 
                         data=csv, 
                         file_name=doe_table,
