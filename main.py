@@ -201,8 +201,8 @@ if uploaded_csv is not None:
                         file_name=doe_table,
                         mime='text/csv')
 
-      st.download_button(label="Download figure",
-                                data=html_bytes,
-                                file_name=fig_file_name,
-                                mime='text/html'
-                                )
+      # st.download_button(label="Download figure",
+      #                           data=html_bytes,
+      #                           file_name=fig_file_name,
+      #                           mime='text/html'
+      #                           )
