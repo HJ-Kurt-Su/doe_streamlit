@@ -54,11 +54,20 @@ def lv_doe_table(df, df_fac):
 
 st.title('DoE (Design of Experiment) Tool')
 
+st.markdown("#### Author & License:")
+
+st.markdown("**Kurt Su** (phononobserver@gmail.com)")
+
+st.markdown("**This tool release under [CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/) license**")
+
+st.markdown("               ")
+st.markdown("               ")
+
 
 # Provide factor example & relative url
 factor_ex_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRt_gecFPJZUw3MmI16zI042Z_RaeWj7w-Fs07wLaj-qKymK_K_XwRx-G09IcrqHmHhUQqP8-Qe0cQQ/pub?gid=0&single=true&output=csv"
 # st.write("Factor Format Example File [link](%s)" % factor_ex_url)
-st.markdown("#### Factor Format Example File [Demo File](%s)" % factor_ex_url)
+st.markdown("### **Factor Format Example File [Demo File](%s)**" % factor_ex_url)
 
 uploaded_csv = st.file_uploader('#### 選擇您要上傳的CSV檔')
 
@@ -127,7 +136,15 @@ if uploaded_csv is not None:
 
     st.write('You selected:', doe_type)
 
-    if st.button('Generate DOE Table'):
+    size_col1, size_col2 = st.columns(2)
+    with size_col1:
+
+        fig_width = st.number_input('Figure Width', min_value=640, value=1280, max_value=5120, step=320) 
+        
+    with size_col2:
+        fig_height = st.number_input('Figure Height', min_value=480, value=960, max_value=3840, step=240) 
+
+    if st.checkbox('Generate DOE Table'):
       # st.write('Why hello there')
 
       if doe_type == "response surface":
@@ -179,19 +196,23 @@ if uploaded_csv is not None:
 # Turn DOE code table to mapping real factor upper & lower limit
       df_resp = lv_doe_table(df_code, df_fac)
       df_resp
-          
+      
+      color_sequence = ["#65BFA1", "#A4D6C1", "#D5EBE1", "#EBF5EC", "#00A0DF", "#81CDE4", "#BFD9E2"]
+      color_sequence = px.colors.qualitative.Pastel
+      # template = "simple_white"
       # df = pd.read_csv("idc_nb_tidy.csv", encoding="utf-8")  
-      fig_pair = px.scatter_matrix(df_resp, dimensions=df_resp.columns,  
-                              width=640, height=480)
+      fig_pair = px.scatter_matrix(df_resp, dimensions=df_resp.columns, 
+                                   color_discrete_sequence=color_sequence,
+                              width=fig_width, height=fig_height)
       
       fig_pair.update_traces(diagonal_visible=False, showupperhalf=False,)
       st.plotly_chart(fig_pair, use_container_width=True)
 
-      # mybuff = io.StringIO()
-      # fig_file_name = doe_type + "_pair-plot-test.html"
-      # # fig_html = fig_pair.write_html(fig_file_name)
-      # fig_pair.write_html(mybuff, include_plotlyjs='cdn')
-      # html_bytes = mybuff.getvalue().encode()
+      mybuff = io.StringIO()
+      fig_file_name = doe_type + "_pair-plot-test.html"
+      # fig_html = fig_pair.write_html(fig_file_name)
+      fig_pair.write_html(mybuff, include_plotlyjs='cdn')
+      html_bytes = mybuff.getvalue().encode()
       
 
       csv = convert_df(df_resp)
@@ -203,8 +224,8 @@ if uploaded_csv is not None:
                         file_name=doe_table,
                         mime='text/csv')
 
-      # st.download_button(label="Download figure",
-      #                           data=html_bytes,
-      #                           file_name=fig_file_name,
-      #                           mime='text/html'
-      #                           )
+      st.download_button(label="Download figure",
+                                data=html_bytes,
+                                file_name=fig_file_name,
+                                mime='text/html'
+                                )
